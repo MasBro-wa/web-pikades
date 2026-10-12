@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cek DPT Online - Pilkades Desa Kebandaran 2026</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        accent: {
+                            50: '#f0f9ff',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col antialiased">
+
+    <!-- TOP NAVIGATION -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/20 flex-shrink-0">
+                    <i class="fa-solid fa-check-to-slot text-lg sm:text-xl"></i>
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-xs sm:text-base font-bold leading-tight bg-gradient-to-r from-brand-700 to-emerald-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent truncate">
+                        PILKADES 2026
+                    </h1>
+                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">Desa Kebandaran, Kec. Bodeh</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Header Kecil: Jam & Koneksi Database -->
+                <div class="hidden lg:flex items-center space-x-2 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                    <i class="fa-regular fa-clock text-brand-600"></i>
+                    <span id="liveClock">-</span>
+                </div>
+
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                    <span id="statusDot" class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-ping mr-1.5"></span>
+                    <span id="connectionLabel">Menghubungkan...</span>
+                </span>
+
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggle" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ganti Tema">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow space-y-6 sm:space-y-8 pb-12">
+
+        <!-- HERO SECTION WITH QUICK SEARCH -->
+        <section class="relative bg-gradient-to-b from-brand-900 via-slate-900 to-slate-900 text-white pt-8 pb-16 sm:pt-10 sm:pb-20 px-3 sm:px-6 lg:px-8 overflow-hidden">
+            <div class="absolute -top-24 -left-24 w-72 h-72 sm:w-96 sm:h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/2 -right-24 w-72 h-72 sm:w-80 sm:h-80 bg-accent-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-4xl mx-auto text-center relative z-10 space-y-4 sm:space-y-6">
+                <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] sm:text-xs text-brand-200">
+                    <i class="fa-solid fa-shield-halved text-brand-400"></i>
+                    <span>Sistem Integrasi DPT Kebandaran</span>
+                </div>
+
+                <h2 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight">
+                    Cek Status Hak Pilih Anda Dalam <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Pilkades Kebandaran 2026</span>
+                </h2>
+                
+                <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed px-2">
+                    Masukkan Nomor Induk Kependudukan (NIK) 16 digit Anda untuk memeriksa status keterdaftaran pada database secara instan.
+                </p>
+
+                <!-- SEARCH BOX CARD -->
+                <div class="pt-2 max-w-2xl mx-auto px-2 sm:px-0">
+                    <div class="bg-white/10 dark:bg-slate-800/80 p-1.5 sm:p-3 rounded-2xl backdrop-blur-xl border border-white/20 shadow-2xl">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div class="relative flex-grow">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-id-card text-base sm:text-lg"></i>
+                                </div>
+                                <input type="text" id="searchInput" maxlength="16" placeholder="Masukkan 16 Digit NIK Anda..." 
+                                    class="w-full pl-10 pr-3 py-3 sm:py-3.5 text-slate-900 dark:text-white bg-white dark:bg-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-xs sm:text-base placeholder-slate-400 shadow-inner">
+                            </div>
+                            <button onclick="performSearch()" id="searchBtn" class="w-full sm:w-auto px-5 py-3 sm:py-3.5 bg-gradient-to-r from-brand-600 to-emerald-500 hover:from-brand-500 hover:to-emerald-400 text-white font-semibold rounded-xl shadow-lg shadow-brand-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs sm:text-base">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <span>Cari Data</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8 -mt-8 sm:-mt-10 relative z-20">
+
+            <!-- STATS OVERVIEW CARDS (Jumlah Total DPT, TPS 1, TPS 2) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
+                <!-- Stat 1: Jumlah Total DPT -->
+                <div class="glass-card rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200/60 dark:border-slate-800 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-base font-semibold text-slate-500 dark:text-slate-400">Jumlah Total DPT</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                            <i class="fa-solid fa-users text-sm sm:text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 sm:mt-4">
+                        <div class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white" id="statTotal">0</div>
+                        <p class="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1">
+                            <i class="fa-solid fa-check-circle mr-1"></i>Keseluruhan Pemilih
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stat 2: DPT TPS 1 -->
+                <div class="glass-card rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200/60 dark:border-slate-800 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-base font-semibold text-slate-500 dark:text-slate-400">Jumlah DPT TPS 1</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center">
+                            <i class="fa-solid fa-location-dot text-sm sm:text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 sm:mt-4">
+                        <div class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white" id="statTPS1">0</div>
+                        <p class="text-[11px] sm:text-xs text-brand-600 dark:text-brand-400 font-medium mt-1">
+                            <i class="fa-solid fa-user-check mr-1"></i>Pemilih Terdaftar di TPS 1
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stat 3: DPT TPS 2 -->
+                <div class="glass-card rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-200/60 dark:border-slate-800 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-base font-semibold text-slate-500 dark:text-slate-400">Jumlah DPT TPS 2</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                            <i class="fa-solid fa-location-dot text-sm sm:text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 sm:mt-4">
+                        <div class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white" id="statTPS2">0</div>
+                        <p class="text-[11px] sm:text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">
+                            <i class="fa-solid fa-user-check mr-1"></i>Pemilih Terdaftar di TPS 2
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS & VISUALIZATIONS SECTION -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Bar Chart: Persebaran DPT per TPS -->
+                <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-sm sm:text-lg text-slate-900 dark:text-white">Persebaran DPT Berdasarkan TPS</h3>
+                            <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Statistik jumlah pemilih TPS 1 dan TPS 2 secara real-time</p>
+                        </div>
+                        <div class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] sm:text-xs font-semibold">
+                            Grafik TPS
+                        </div>
+                    </div>
+                    <div class="relative h-56 sm:h-72 w-full flex justify-center items-center">
+                        <canvas id="tpsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Informasi Tambahan / Panduan -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-md border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-sm sm:text-lg text-slate-900 dark:text-white">Informasi Penting</h3>
+                            <span class="text-[10px] sm:text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2.5 py-1 rounded-full font-medium">Panduan</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Laporan pengaduan yang Anda kirimkan melalui formulir di bawah ini akan langsung tersimpan di database pada sheet <b>pengaduan</b> secara otomatis.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 space-y-2 text-xs">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 truncate">
+                            <i class="fa-solid fa-phone text-brand-600"></i> Hotline: -
+                        </div>
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 truncate">
+                            <i class="fa-solid fa-envelope text-brand-600"></i> pps@desakebandaran.id
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DATA TABLE & FILTER SECTION -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700/60 overflow-hidden">
+                <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brand-600 dark:text-brand-400"></i>
+                            Daftar Seluruh Pemilih DPT Kebandaran
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Daftar lengkap data pemilih yang tersimpan dalam sistem</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="togglePrivacy()" id="privacyBtn" class="w-full sm:w-auto px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-eye-slash" id="privacyIcon"></i>
+                            <span id="privacyText">Sensor Data (Aktif)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[700px]">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 uppercase text-[10px] sm:text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-700">
+                                <th class="py-3 px-3 sm:px-6">No</th>
+                                <th class="py-3 px-3 sm:px-6">Nama Pemilih</th>
+                                <th class="py-3 px-3 sm:px-6">NIK</th>
+                                <th class="py-3 px-3 sm:px-6">Tempat, Tanggal Lahir</th>
+                                <th class="py-3 px-3 sm:px-6">RT / RW</th>
+                                <th class="py-3 px-3 sm:px-6">TPS</th>
+                                <th class="py-3 px-3 sm:px-6 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="voterTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/60 text-xs sm:text-sm">
+                            <!-- JS populated -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 text-center" id="tableInfo">
+                    Memuat data dari database...
+                </div>
+            </div>
+
+            <!-- LAPOR PEMILIH BELUM TERDAFTAR (FORM FORMAL DENGAN NO HP WAJIB) -->
+            <div id="lapor" class="bg-gradient-to-br from-slate-900 to-brand-950 text-white rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div class="max-w-3xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-[11px] font-semibold mb-3 border border-brand-500/30">
+                        Layanan Pengaduan Masyarakat
+                    </span>
+                    <h3 class="text-xl sm:text-3xl font-extrabold tracking-tight">Belum Terdaftar Dalam Database?</h3>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
+                        Jika Anda adalah warga Desa Kebandaran dan belum ditemukan dalam sistem ini, silakan isi formulir laporan di bawah ini. Data akan otomatis dikirim ke sheet <b>pengaduan</b> di database.
+                    </p>
+
+                    <form id="complaintForm" onsubmit="handleFormSubmit(event)" class="mt-6 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap Sesuai KTP <span class="text-red-400">*</span></label>
+                                <input type="text" id="reportName" required placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">NIK (16 Digit) <span class="text-red-400">*</span></label>
+                                <input type="text" id="reportNik" maxlength="16" required placeholder="3327xxxxxxxxxxxx" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">No HP / WhatsApp (Dapat dihubungi) <span class="text-red-400">*</span></label>
+                            <input type="tel" id="reportNoHp" required placeholder="Contoh: 081234567890" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">Detail Keterangan Laporan <span class="text-red-400">*</span></label>
+                            <textarea id="reportDesc" rows="3" required placeholder="Jelaskan kendala atau perbaikan data..." class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm"></textarea>
+                        </div>
+
+                        <button type="submit" id="submitReportBtn" class="w-full sm:w-auto px-6 py-3 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Kirim Laporan Pengaduan</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER HAK CIPTA -->
+    <footer class="w-full bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 px-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+        <div class="max-w-7xl mx-auto space-y-1">
+            <p class="font-semibold text-slate-700 dark:text-slate-300">Hak Cipta Panitia Pilkades Kebandaran Tahun 2026</p>
+            <p class="text-[11px]">Sistem Informasi Data Pemilih Terpadu Desa Kebandaran, Kecamatan Bodeh</p>
+        </div>
+    </footer>
+
+    <!-- SEARCH RESULT MODAL -->
+    <div id="resultModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm hidden transition-opacity">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all scale-95 opacity-0" id="modalContainer">
+            
+            <div id="modalHeader" class="bg-gradient-to-r from-brand-600 to-emerald-600 p-5 sm:p-6 text-white relative">
+                <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="inline-block px-3 py-1 rounded-full bg-white/20 text-[11px] font-semibold mb-2" id="modalStatusBadge">
+                    Status Terverifikasi
+                </div>
+                <!-- Nama pemilih tampil utuh tanpa sensor pada hasil pencarian -->
+                <h3 class="text-lg sm:text-xl font-bold truncate pr-6" id="modalVoterName">-</h3>
+                <!-- NIK pemilih tampil utuh tanpa sensor pada hasil pencarian -->
+                <p class="text-xs text-brand-100" id="modalVoterNik">NIK: -</p>
+            </div>
+
+            <div class="p-5 sm:p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                        <span class="text-slate-400 block mb-1">Nomor TPS</span>
+                        <span class="font-bold text-brand-600 dark:text-brand-400 text-sm sm:text-base" id="modalTps">-</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                        <span class="text-slate-400 block mb-1">RT / RW</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-200 text-sm sm:text-base" id="modalRtRw">-</span>
+                    </div>
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl text-xs">
+                    <span class="text-slate-400 block mb-1">Tempat, Tanggal Lahir</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-200 text-sm sm:text-base" id="modalAddress">-</span>
+                </div>
+                <button onclick="closeModal()" class="w-full py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 font-semibold text-slate-800 dark:text-white rounded-xl transition text-xs sm:text-sm">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT LOGIC & API -->
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylc9sORwFjRVUn4zG5vV11T1IHu5TGmSfTBXJQoj5WsJPkq9dwLmbqMhKfxaVryzM/exec";
+
+        let allVotersData = [];
+        let isPrivacyMasked = true;
+        let tpsChartInstance = null;
+
+        // Jam & Tanggal Real-Time
+        function updateClock() {
+            const now = new Date();
+            const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('id-ID', optionsDate);
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) {
+                clockEl.innerText = `${dateStr} | ${timeStr}`;
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = "fa-solid fa-moon text-sm";
+            } else {
+                html.classList.add('dark');
+                icon.className = "fa-solid fa-sun text-sm";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadDatabase();
+        });
+
+        async function loadDatabase() {
+            try {
+                let response = await fetch(SCRIPT_URL);
+                let result = await response.json();
+
+                if (result.status === "success") {
+                    allVotersData = result.data || [];
+                    
+                    let countTps1 = 0;
+                    let countTps2 = 0;
+
+                    allVotersData.forEach(voter => {
+                        let tpsNum = String(voter.tps).trim();
+                        if (tpsNum === '1') countTps1++;
+                        if (tpsNum === '2') countTps2++;
+                    });
+
+                    document.getElementById('statTotal').innerText = allVotersData.length;
+                    document.getElementById('statTPS1').innerText = countTps1;
+                    document.getElementById('statTPS2').innerText = countTps2;
+                    
+                    document.getElementById('connectionLabel').innerText = "Terhubung ke Database";
+                    document.getElementById('statusDot').className = "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-ping mr-1.5";
+
+                    renderTpsChart(countTps1, countTps2);
+                    renderTable(allVotersData);
+                }
+            } catch (error) {
+                console.error("Gagal memuat database:", error);
+                document.getElementById('connectionLabel').innerText = "Gagal Terhubung";
+                document.getElementById('statusDot').className = "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-500 mr-1.5";
+                document.getElementById('tableInfo').innerText = "Gagal memuat data dari database.";
+            }
+        }
+
+        function renderTpsChart(tps1, tps2) {
+            const ctx = document.getElementById('tpsChart').getContext('2d');
+            if(tpsChartInstance) tpsChartInstance.destroy();
+            tpsChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['TPS 1', 'TPS 2'],
+                    datasets: [{
+                        label: 'Jumlah DPT',
+                        data: [tps1, tps2],
+                        backgroundColor: ['#16a34a', '#0ea5e9'],
+                        borderRadius: 8,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function maskNik(nik) {
+            if (!nik) return '-';
+            let strNik = String(nik);
+            if (!isPrivacyMasked) return strNik;
+            if (strNik.length > 8) {
+                return strNik.substring(0, 8) + "********";
+            }
+            return "********";
+        }
+
+        function maskNama(nama) {
+            if (!nama) return '-';
+            let strNama = String(nama).trim();
+            if (!isPrivacyMasked) return strNama;
+            
+            return strNama.split(' ').map(part => {
+                if (part.length <= 2) return part[0] + '*';
+                return part.substring(0, 2) + '*'.repeat(part.length - 2);
+            }).join(' ');
+        }
+
+        function togglePrivacy() {
+            isPrivacyMasked = !isPrivacyMasked;
+            const icon = document.getElementById('privacyIcon');
+            const text = document.getElementById('privacyText');
+            if (isPrivacyMasked) {
+                icon.className = "fa-solid fa-eye-slash";
+                text.innerText = "Sensor Data (Aktif)";
+            } else {
+                icon.className = "fa-solid fa-eye";
+                text.innerText = "Buka Data";
+            }
+            renderTable(allVotersData);
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('voterTableBody');
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-400">Tidak ada data pemilih ditemukan.</td></tr>`;
+                document.getElementById('tableInfo').innerText = "Menampilkan 0 data";
+                return;
+            }
+
+            data.forEach((voter, index) => {
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/40 transition";
+                
+                tr.innerHTML = `
+                    <td class="py-3 px-3 sm:px-6 font-medium text-slate-500">${index + 1}</td>
+                    <td class="py-3 px-3 sm:px-6 font-bold text-slate-900 dark:text-white">${maskNama(voter.nama)}</td>
+                    <td class="py-3 px-3 sm:px-6 font-mono text-xs">${maskNik(voter.nik)}</td>
+                    <td class="py-3 px-3 sm:px-6 text-slate-600 dark:text-slate-300">${voter.alamat || '-'}</td>
+                    <td class="py-3 px-3 sm:px-6">RT ${voter.rt || '0'} / RW ${voter.rw || '0'}</td>
+                    <td class="py-3 px-3 sm:px-6 font-semibold text-brand-600 dark:text-brand-400">TPS ${voter.tps || '-'}</td>
+                    <td class="py-3 px-3 sm:px-6 text-center">
+                        <button onclick='showDetail(${JSON.stringify(voter)})' class="px-2.5 py-1.5 bg-brand-50 dark:bg-brand-950 text-brand-600 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900 rounded-lg text-xs font-semibold transition">
+                            <i class="fa-solid fa-eye"></i> Detail
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('tableInfo').innerText = `Menampilkan ${data.length} dari total data pemilih database`;
+        }
+
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                alert("Silakan masukkan NIK terlebih dahulu!");
+                return;
+            }
+
+            const btn = document.getElementById('searchBtn');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mencari...`;
+            btn.disabled = true;
+
+            try {
+                let response = await fetch(`${SCRIPT_URL}?nik=${encodeURIComponent(query)}`);
+                let result = await response.json();
+
+                if (result.status === "success" && result.data && result.data.length > 0) {
+                    showDetail(result.data[0]);
+                } else {
+                    alert("NIK tidak ditemukan di dalam database.");
+                }
+            } catch (error) {
+                console.error("Error pencarian:", error);
+                alert("Terjadi kesalahan koneksi saat mencari data.");
+            } finally {
+                btn.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i><span>Cari Data</span>`;
+                btn.disabled = false;
+            }
+        }
+
+        function showDetail(voter) {
+            document.getElementById('modalVoterName').innerText = voter.nama || '-';
+            document.getElementById('modalVoterNik').innerText = `NIK: ${voter.nik || '-'}`;
+            document.getElementById('modalTps').innerText = `TPS ${voter.tps || '-'}`;
+            document.getElementById('modalRtRw').innerText = `RT ${voter.rt || '0'} / RW ${voter.rw || '0'}`;
+            document.getElementById('modalAddress').innerText = voter.alamat || '-';
+            
+            const badge = document.getElementById('modalStatusBadge');
+            badge.innerText = `Status: Terdaftar`;
+
+            const modal = document.getElementById('resultModal');
+            const container = document.getElementById('modalContainer');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                container.classList.remove('scale-95', 'opacity-0');
+                container.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('resultModal');
+            const container = document.getElementById('modalContainer');
+            container.classList.remove('scale-100', 'opacity-100');
+            container.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('reportName').value.trim();
+            const nik = document.getElementById('reportNik').value.trim();
+            const noHp = document.getElementById('reportNoHp').value.trim();
+            const desc = document.getElementById('reportDesc').value.trim();
+
+            if (!name || !nik || !noHp || !desc) {
+                alert("Harap lengkapi semua kolom isian, termasuk Nomor HP!");
+                return;
+            }
+
+            const btn = document.getElementById('submitReportBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim Laporan...</span>`;
+            btn.disabled = true;
+
+            const payload = {
+                nama: name,
+                nik: nik,
+                no_hp: noHp,
+                keterangan: desc
+            };
+
+            try {
+                let response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                let result = await response.json();
+                
+                if (result.status === "success") {
+                    alert(`Terima kasih ${name}, laporan pengaduan Anda dengan Nomor HP ${noHp} telah berhasil dikirim dan tersimpan di database (sheet pengaduan).`);
+                    document.getElementById('complaintForm').reset();
+                } else {
+                    alert("Gagal mengirim laporan: " + (result.message || "Terjadi kesalahan"));
+                }
+            } catch (error) {
+                console.error("Gagal mengirim laporan:", error);
+                alert("Terjadi kesalahan koneksi saat mengirim laporan.");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
