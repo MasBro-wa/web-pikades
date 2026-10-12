@@ -77,7 +77,7 @@
                     <i class="fa-solid fa-check-to-slot text-lg sm:text-xl"></i>
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-xs sm:text-base font-bold leading-tight bg-gradient-to-r from-brand-700 to-emerald-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent truncate">
+                    <h1 class="text-xs sm:text-base font-bold leading-tight bg-gradient-to-r from-brand-700 to-emerald-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
                         PILKADES 2026
                     </h1>
                     <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">Desa Kebandaran, Kec. Bodeh</p>
@@ -118,7 +118,7 @@
                 </div>
 
                 <h2 class="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-snug sm:leading-tight">
-                    Cek Status Hak Pilih Anda Dalam <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Pilkades Kebandaran 2026</span>
+                    Cek Daftar Pemilih Tetap Pemilihan <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Kepala Desa Kebandaran 2026</span>
                 </h2>
                 
                 <p class="text-xs sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed px-2">
@@ -225,12 +225,12 @@
                             <span class="text-[10px] sm:text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2.5 py-1 rounded-full font-medium">Panduan</span>
                         </div>
                         <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                            Laporan pengaduan yang Anda kirimkan melalui formulir di bawah ini akan langsung tersimpan di database pada sheet <b>pengaduan</b> secara otomatis.
+                            Pastikan Anda memasukkan 16 digit NIK dengan benar pada kolom pencarian di atas untuk memeriksa status hak pilih Anda pada Pilkades Kebandaran 2026.
                         </p>
                     </div>
                     <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 space-y-2 text-xs">
                         <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 truncate">
-                            <i class="fa-solid fa-phone text-brand-600"></i> Hotline: -
+                            <i class="fa-solid fa-phone text-brand-600"></i> Hotline: 0812-3456-7890
                         </div>
                         <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 truncate">
                             <i class="fa-solid fa-envelope text-brand-600"></i> pps@desakebandaran.id
@@ -245,9 +245,9 @@
                     <div>
                         <h3 class="font-bold text-sm sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
                             <i class="fa-solid fa-list-check text-brand-600 dark:text-brand-400"></i>
-                            Daftar Seluruh Pemilih DPT Kebandaran
+                            Daftar Seluruh Pemilih DPT Kebandaran (Menampilkan 15 Data Utama)
                         </h3>
-                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Daftar lengkap data pemilih yang tersimpan dalam sistem</p>
+                        <p class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">Daftar terbatas untuk tampilan dasbor yang ringkas</p>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
@@ -279,47 +279,6 @@
 
                 <div class="p-4 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 text-center" id="tableInfo">
                     Memuat data dari database...
-                </div>
-            </div>
-
-            <!-- LAPOR PEMILIH BELUM TERDAFTAR (FORM FORMAL DENGAN NO HP WAJIB) -->
-            <div id="lapor" class="bg-gradient-to-br from-slate-900 to-brand-950 text-white rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden">
-                <div class="max-w-3xl">
-                    <span class="inline-block px-3 py-1 rounded-full bg-brand-500/20 text-brand-300 text-[11px] font-semibold mb-3 border border-brand-500/30">
-                        Layanan Pengaduan Masyarakat
-                    </span>
-                    <h3 class="text-xl sm:text-3xl font-extrabold tracking-tight">Belum Terdaftar Dalam Database?</h3>
-                    <p class="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
-                        Jika Anda adalah warga Desa Kebandaran dan belum ditemukan dalam sistem ini, silakan isi formulir laporan di bawah ini. Data akan otomatis dikirim ke sheet <b>pengaduan</b> di database.
-                    </p>
-
-                    <form id="complaintForm" onsubmit="handleFormSubmit(event)" class="mt-6 space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-1">Nama Lengkap Sesuai KTP <span class="text-red-400">*</span></label>
-                                <input type="text" id="reportName" required placeholder="Contoh: Budi Santoso" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-300 mb-1">NIK (16 Digit) <span class="text-red-400">*</span></label>
-                                <input type="text" id="reportNik" maxlength="16" required placeholder="3327xxxxxxxxxxxx" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">No HP / WhatsApp (Dapat dihubungi) <span class="text-red-400">*</span></label>
-                            <input type="tel" id="reportNoHp" required placeholder="Contoh: 081234567890" class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1">Detail Keterangan Laporan <span class="text-red-400">*</span></label>
-                            <textarea id="reportDesc" rows="3" required placeholder="Jelaskan kendala atau perbaikan data..." class="w-full px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-400 text-xs sm:text-sm"></textarea>
-                        </div>
-
-                        <button type="submit" id="submitReportBtn" class="w-full sm:w-auto px-6 py-3 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>Kirim Laporan Pengaduan</span>
-                        </button>
-                    </form>
                 </div>
             </div>
 
@@ -523,7 +482,10 @@
                 return;
             }
 
-            data.forEach((voter, index) => {
+            // Membatasi hanya 15 data pertama yang ditampilkan pada dasbor
+            const limitedData = data.slice(0, 15);
+
+            limitedData.forEach((voter, index) => {
                 let tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/40 transition";
                 
@@ -543,7 +505,7 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('tableInfo').innerText = `Menampilkan ${data.length} dari total data pemilih database`;
+            document.getElementById('tableInfo').innerText = `Menampilkan 15 data teratas dari total ${data.length} data pemilih database`;
         }
 
         async function performSearch() {
@@ -602,57 +564,6 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 200);
-        }
-
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('reportName').value.trim();
-            const nik = document.getElementById('reportNik').value.trim();
-            const noHp = document.getElementById('reportNoHp').value.trim();
-            const desc = document.getElementById('reportDesc').value.trim();
-
-            if (!name || !nik || !noHp || !desc) {
-                alert("Harap lengkapi semua kolom isian, termasuk Nomor HP!");
-                return;
-            }
-
-            const btn = document.getElementById('submitReportBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim Laporan...</span>`;
-            btn.disabled = true;
-
-            const payload = {
-                nama: name,
-                nik: nik,
-                no_hp: noHp,
-                keterangan: desc
-            };
-
-            try {
-                let response = await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "text/plain;charset=utf-8"
-                    },
-                    body: JSON.stringify(payload)
-                });
-                
-                let result = await response.json();
-                
-                if (result.status === "success") {
-                    alert(`Terima kasih ${name}, laporan pengaduan Anda dengan Nomor HP ${noHp} telah berhasil dikirim dan tersimpan di database (sheet pengaduan).`);
-                    document.getElementById('complaintForm').reset();
-                } else {
-                    alert("Gagal mengirim laporan: " + (result.message || "Terjadi kesalahan"));
-                }
-            } catch (error) {
-                console.error("Gagal mengirim laporan:", error);
-                alert("Terjadi kesalahan koneksi saat mengirim laporan.");
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
         }
     </script>
 </body>
